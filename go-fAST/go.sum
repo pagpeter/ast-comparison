@@ -1,0 +1,6 @@
+github.com/brunoga/deep v1.2.4 h1:Aj9E9oUbE+ccbyh35VC/NHlzzjfIVU69BXu2mt2LmL8=
+github.com/brunoga/deep v1.2.4/go.mod h1:GDV6dnXqn80ezsLSZ5Wlv1PdKAWAO4L5PnKYtv2dgaI=
+github.com/t14raptor/go-fast v0.0.0-20240805190307-86d97b17607a h1:PXWtszuIRC1ZiuoVNDUzHuj57WOjhMAadWfdeSbFUvk=
+github.com/t14raptor/go-fast v0.0.0-20240805190307-86d97b17607a/go.mod h1:pEpo4BXvgwttfdoT3CdGLK7HLExuB/Likw4yqNipbVM=
+golang.org/x/text v0.4.0 h1:BrVqGRd7+k1DiOgtnFvAkoQEWQvBc25ouMJM6429SFg=
+golang.org/x/text v0.4.0/go.mod h1:mrYo+phRRbMaCq/xk9113O4dZlRixOauAjOtrjsXDZ8=
