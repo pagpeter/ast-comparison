@@ -5,10 +5,9 @@ const t = require("@babel/types");
 const fs = require("node:fs");
 
 const file = fs.readFileSync("./input.js", "utf-8");
-const ast = parser.parse(file);
 
 // Taken from https://github.com/wwhtrbbtt/deob-transformations/blob/3b6baac12f992cba5e816e41cf3ed08e655c07ea/transformations/general.js#L266
-traverse(ast, {
+const traversal = {
   ReturnStatement(path) {
     const { node } = path;
 
@@ -107,7 +106,18 @@ traverse(ast, {
     if (!path.node.init.expressions) return;
     path.node.init.expressions = [expressions[expressions.length - 1]];
   },
-});
+};
 
+console.time("Total");
+console.time("parsing");
+const ast = parser.parse(file);
+console.timeEnd("parsing");
+console.time("traversal");
+traverse(ast, traversal);
+console.timeEnd("traversal");
+console.time("generating");
 const out = generate(ast).code;
+console.timeEnd("generating");
+console.timeEnd("Total");
+
 fs.writeFileSync("./output/js-babel.js", out);

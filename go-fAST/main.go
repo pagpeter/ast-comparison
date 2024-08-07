@@ -2,10 +2,9 @@ package main
 
 import (
 	"fmt"
-	"io/fs"
 	"os"
+	"time"
 
-	"github.com/brunoga/deep"
 	"github.com/t14raptor/go-fast/ast"
 	"github.com/t14raptor/go-fast/generator"
 	"github.com/t14raptor/go-fast/parser"
@@ -18,14 +17,14 @@ type SeqExprVisitor struct {
 func (v *SeqExprVisitor) VisitStatements(n *ast.Statements) {
 	n.VisitChildrenWith(v)
 
-	var newStmts ast.Statements
+	newStmts := make(ast.Statements, 0, len(*n))
 
 	for _, stmt := range *n {
 		added := false
 		if expr, ok := stmt.Stmt.(*ast.ExpressionStatement); ok {
 			if seq, ok := expr.Expression.Expr.(*ast.SequenceExpression); ok {
-				for _, expr := range seq.Sequence {
-					newStmts = append(newStmts, ast.Statement{Stmt: &ast.ExpressionStatement{Expression: DeepCopy(&expr)}})
+				for i := range seq.Sequence {
+					newStmts = append(newStmts, ast.Statement{Stmt: &ast.ExpressionStatement{Expression: &seq.Sequence[i]}})
 				}
 				added = true
 			}
@@ -34,8 +33,8 @@ func (v *SeqExprVisitor) VisitStatements(n *ast.Statements) {
 				last := &seq.Sequence[len(seq.Sequence)-1]
 				seq.Sequence = seq.Sequence[:len(seq.Sequence)-1]
 
-				for _, expr := range seq.Sequence {
-					newStmts = append(newStmts, ast.Statement{Stmt: &ast.ExpressionStatement{Expression: DeepCopy(&expr)}})
+				for i := range seq.Sequence {
+					newStmts = append(newStmts, ast.Statement{Stmt: &ast.ExpressionStatement{Expression: &seq.Sequence[i]}})
 				}
 				newStmts = append(newStmts, ast.Statement{Stmt: &ast.ReturnStatement{Argument: last}})
 				added = true
@@ -45,8 +44,8 @@ func (v *SeqExprVisitor) VisitStatements(n *ast.Statements) {
 				last := &seq.Sequence[len(seq.Sequence)-1]
 				seq.Sequence = seq.Sequence[:len(seq.Sequence)-1]
 
-				for _, expr := range seq.Sequence {
-					newStmts = append(newStmts, ast.Statement{Stmt: &ast.ExpressionStatement{Expression: DeepCopy(&expr)}})
+				for i := range seq.Sequence {
+					newStmts = append(newStmts, ast.Statement{Stmt: &ast.ExpressionStatement{Expression: &seq.Sequence[i]}})
 				}
 				newStmts = append(newStmts, ast.Statement{Stmt: &ast.IfStatement{
 					Test:       last,
@@ -61,8 +60,8 @@ func (v *SeqExprVisitor) VisitStatements(n *ast.Statements) {
 					last := &seq.Sequence[len(seq.Sequence)-1]
 					seq.Sequence = seq.Sequence[:len(seq.Sequence)-1]
 
-					for _, expr := range seq.Sequence {
-						newStmts = append(newStmts, ast.Statement{Stmt: &ast.ExpressionStatement{Expression: DeepCopy(&expr)}})
+					for i := range seq.Sequence {
+						newStmts = append(newStmts, ast.Statement{Stmt: &ast.ExpressionStatement{Expression: &seq.Sequence[i]}})
 					}
 					if last != nil {
 						var forLoopInitiator ast.ForLoopInitializer = &ast.ForLoopInitializerExpression{Expression: last}
@@ -86,24 +85,26 @@ func (v *SeqExprVisitor) VisitStatements(n *ast.Statements) {
 	*n = newStmts
 }
 
-func DeepCopy(t *ast.Expression) *ast.Expression {
-	return deep.MustCopy(t)
-}
-
 func (n *SeqExprVisitor) VisitProgram(program *ast.Program) {
-	println("[*] Replacing sequence expressions")
 	program.VisitChildrenWith(n)
 }
 
 func main() {
 	src, _ := os.ReadFile("../input.js")
+	parseStart := time.Now()
 	f, err := parser.ParseFile(string(src))
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(string(src))
+	parseEnd := time.Now()
 	visitor := SeqExprVisitor{ast.NoopVisitor{}}
+	visitor.V = &visitor
+	traversalStart := time.Now()
 	visitor.VisitProgram(f)
+	traversalEnd := time.Now()
+	genStart := time.Now()
 	out := generator.Generate(f)
-	os.WriteFile("./out/go-fAST.js", []byte(out), fs.ModeAppend)
+	genEnd := time.Now()
+	os.WriteFile("../output/go-fAST.js", []byte(out), 0644)
+	fmt.Printf("Total: %v\nparsing: %v\ntraversal: %v\ngenerating: %v\n", genEnd.Sub(parseStart), parseEnd.Sub(parseStart), traversalEnd.Sub(traversalStart), genEnd.Sub(genStart))
 }
