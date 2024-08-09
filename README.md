@@ -11,3 +11,10 @@ The first three libraries I aim to test are:
 - [babel](https://www.npmjs.com/package/@babel/core)
 
 In the process, it also shows examples on how the libraries can be used.
+
+## Credits
+
+Most of the stuff was written by me. However, i'd like to thank
+
+- @T14Raptor for the go-fAST example
+- @rsa2048 for some speedups in the swc test
