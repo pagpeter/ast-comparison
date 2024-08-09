@@ -25,24 +25,18 @@ impl VisitMut for Visitor {
                 if expr.is_seq() {
                     let seq = expr.as_seq().unwrap();
                     for expr in &seq.exprs {
-                        new_stmtns
-                            .push(<Box<swc_ecma_ast::Expr> as Clone>::clone(&expr).into_stmt());
+                        new_stmtns.push((expr.clone()).into_stmt());
                     }
                     added = true;
                 }
             } else if stmt.is_return_stmt() {
                 let ret = stmt.as_return_stmt().unwrap();
-                if ret.arg.is_some()
-                    && <Option<Box<swc_ecma_ast::Expr>> as Clone>::clone(&ret.arg)
-                        .unwrap()
-                        .is_seq()
-                {
+                if ret.arg.is_some() && ret.arg.clone().unwrap().is_seq() {
                     let tmp = ret.arg.to_owned().unwrap();
                     let mut seq = tmp.as_seq().unwrap().exprs.to_vec();
                     let last = seq.pop();
                     for expr in seq {
-                        new_stmtns
-                            .push(<Box<swc_ecma_ast::Expr> as Clone>::clone(&expr).into_stmt());
+                        new_stmtns.push(expr.into_stmt());
                     }
                     new_stmtns.push(swc_ecma_ast::Stmt::Return(ReturnStmt {
                         span: Span::dummy(),
@@ -58,8 +52,7 @@ impl VisitMut for Visitor {
                     let last = seq.pop().unwrap();
 
                     for expr in &seq {
-                        new_stmtns
-                            .push(<Box<swc_ecma_ast::Expr> as Clone>::clone(&expr).into_stmt());
+                        new_stmtns.push((expr.clone()).into_stmt());
                     }
                     new_stmtns.push(swc_ecma_ast::Stmt::If(IfStmt {
                         span: Span::dummy(),
@@ -73,9 +66,7 @@ impl VisitMut for Visitor {
                 let for_stmt = stmt.as_for_stmt().unwrap();
 
                 if for_stmt.init.is_some()
-                    && <Option<swc_ecma_ast::VarDeclOrExpr> as Clone>::clone(&for_stmt.init)
-                        .unwrap()
-                        .is_expr()
+                    && for_stmt.init.clone().unwrap().is_expr()
                     && for_stmt
                         .init
                         .to_owned()
@@ -92,8 +83,7 @@ impl VisitMut for Visitor {
                     let last = seq.pop();
 
                     for expr in &seq {
-                        new_stmtns
-                            .push(<Box<swc_ecma_ast::Expr> as Clone>::clone(&expr).into_stmt());
+                        new_stmtns.push((expr.clone()).into_stmt());
                     }
                     if last.is_some() {
                         new_stmtns.push(swc_ecma_ast::Stmt::For(ForStmt {
