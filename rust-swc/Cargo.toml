@@ -4,4 +4,13 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-swccf = { git = "https://github.com/wwhtrbbtt/swcf.git" }
+swc_common = "0.37.2"
+swc_core = { version = "0.100.5", features = [
+    "common",
+    "ecma_utils",
+    "ecma_plugin_transform",
+    "ecma_codegen",
+    "ecma_transforms_optimization",
+] }
+swc_ecma_ast = "0.118.0"
+swc_ecma_parser = "0.149.0"
