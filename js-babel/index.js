@@ -109,15 +109,15 @@ const traversal = {
 };
 
 console.time("Total");
-console.time("parsing");
+console.time("Parsing");
 const ast = parser.parse(file);
-console.timeEnd("parsing");
-console.time("traversal");
+console.timeEnd("Parsing");
+console.time("Traversal");
 traverse(ast, traversal);
-console.timeEnd("traversal");
-console.time("generating");
+console.timeEnd("Traversal");
+console.time("Generating");
 const out = generate(ast).code;
-console.timeEnd("generating");
+console.timeEnd("Generating");
 console.timeEnd("Total");
 
 fs.writeFileSync("./output/js-babel.js", out);

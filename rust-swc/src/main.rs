@@ -154,11 +154,11 @@ fn main() {
     let end_gen = Instant::now();
 
     println!(
-        "Total: {:?}, parsing: {:?}, traversal: {:?}, generating: {:?}",
-        end_gen - start_parse,
+        "Parsing: {:?}\nTraversal: {:?}\nGenerating: {:?}\nTotal: {:?}",
         end_parse - start_parse,
         end_visit - start_visit,
-        end_gen - start_gen
+        end_gen - start_gen,
+        end_gen - start_parse,
     );
     let _ = fs::write("../output/rust-swc.js", code);
 }

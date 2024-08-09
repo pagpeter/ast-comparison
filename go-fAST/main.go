@@ -106,5 +106,5 @@ func main() {
 	out := generator.Generate(f)
 	genEnd := time.Now()
 	os.WriteFile("../output/go-fAST.js", []byte(out), 0644)
-	fmt.Printf("Total: %v\nparsing: %v\ntraversal: %v\ngenerating: %v\n", genEnd.Sub(parseStart), parseEnd.Sub(parseStart), traversalEnd.Sub(traversalStart), genEnd.Sub(genStart))
+	fmt.Printf("Parsing: %v\nTraversal: %v\nGenerating: %v\nTotal: %v\n", parseEnd.Sub(parseStart), traversalEnd.Sub(traversalStart), genEnd.Sub(genStart), genEnd.Sub(parseStart))
 }
