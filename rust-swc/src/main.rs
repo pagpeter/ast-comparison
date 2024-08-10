@@ -19,21 +19,23 @@ impl VisitMut for Visitor {
     fn visit_mut_stmts(&mut self, path: &mut Vec<Stmt>) {
         path.visit_mut_children_with(self);
 
+        let stmts = path.drain(..).collect::<Vec<Stmt>>();
         // Reserve capacity to avoid reallocations
-        let mut new_stmts: Vec<Stmt> = Vec::with_capacity(path.len());
+        let mut new_stmts: Vec<Stmt> = Vec::with_capacity(stmts.len());
 
-        for stmt in path {
+        for stmt in stmts {
             match stmt {
-                Stmt::Expr(ExprStmt { expr, .. }) if expr.is_seq() => {
-                    let seq = expr.as_seq().unwrap();
+                Stmt::Expr(ExprStmt { mut expr, .. }) if expr.is_seq() => {
+                    let seq = expr.as_mut_seq().unwrap();
 
                     new_stmts.reserve(seq.exprs.len());
 
-                    for expr in &seq.exprs {
-                        new_stmts.push(expr.clone().into_stmt());
+                    for expr in &mut seq.exprs {
+                        let expr = expr.take();
+                        new_stmts.push(expr.into_stmt());
                     }
                 }
-                Stmt::Return(ReturnStmt { arg, .. })
+                Stmt::Return(ReturnStmt { mut arg, .. })
                     if arg.is_some() && arg.as_ref().unwrap().is_seq() =>
                 {
                     let seq = arg.as_mut().unwrap().as_mut_seq().unwrap();
@@ -41,8 +43,9 @@ impl VisitMut for Visitor {
 
                     new_stmts.reserve(seq.exprs.len() + 1);
 
-                    for expr in &seq.exprs {
-                        new_stmts.push(expr.clone().into_stmt());
+                    for expr in &mut seq.exprs {
+                        let expr = expr.take();
+                        new_stmts.push(expr.into_stmt());
                     }
 
                     new_stmts.push(Stmt::Return(ReturnStmt {
@@ -51,7 +54,7 @@ impl VisitMut for Visitor {
                     }));
                 }
                 Stmt::If(IfStmt {
-                    ref mut test,
+                    mut test,
                     cons,
                     alt,
                     ..
@@ -61,19 +64,20 @@ impl VisitMut for Visitor {
 
                     new_stmts.reserve(seq.exprs.len() + 1);
 
-                    for expr in &seq.exprs {
-                        new_stmts.push(expr.clone().into_stmt());
+                    for expr in &mut seq.exprs {
+                        let expr = expr.take();
+                        new_stmts.push(expr.into_stmt());
                     }
 
                     new_stmts.push(Stmt::If(IfStmt {
                         span: Span::dummy(),
                         test: last,
-                        cons: cons.clone(),
-                        alt: alt.clone(),
+                        cons,
+                        alt,
                     }));
                 }
                 Stmt::For(ForStmt {
-                    init,
+                    mut init,
                     test,
                     update,
                     body,
@@ -93,21 +97,24 @@ impl VisitMut for Visitor {
 
                     new_stmts.reserve(seq.exprs.len() + 1);
 
-                    for expr in &seq.exprs {
-                        new_stmts.push(expr.clone().into_stmt());
+                    for expr in &mut seq.exprs {
+                        let expr = expr.take();
+                        new_stmts.push(expr.into_stmt());
                     }
 
                     new_stmts.push(Stmt::For(ForStmt {
                         span: Span::dummy(),
                         init: Some(swc_ecma_ast::VarDeclOrExpr::Expr(last)),
-                        test: test.clone(),
-                        update: update.clone(),
-                        body: body.clone(),
+                        test,
+                        update,
+                        body,
                     }));
                 }
-                _ => new_stmts.push(stmt.clone()),
+                _ => new_stmts.push(stmt),
             }
         }
+
+        *path = new_stmts;
     }
 }
 
