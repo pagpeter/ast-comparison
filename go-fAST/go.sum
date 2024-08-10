@@ -6,5 +6,7 @@ github.com/t14raptor/go-fast v0.0.0-20240807090140-3a2e84c2a6a9 h1:4ulbDhuIICeW1
 github.com/t14raptor/go-fast v0.0.0-20240807090140-3a2e84c2a6a9/go.mod h1:pEpo4BXvgwttfdoT3CdGLK7HLExuB/Likw4yqNipbVM=
 github.com/t14raptor/go-fast v0.0.0-20240808230354-f4656a608e8d h1:bxCuNNrlBdrWOYMWHYstOvwRXVPkTezA80oc7EYSkGg=
 github.com/t14raptor/go-fast v0.0.0-20240808230354-f4656a608e8d/go.mod h1:pEpo4BXvgwttfdoT3CdGLK7HLExuB/Likw4yqNipbVM=
+github.com/t14raptor/go-fast v0.0.0-20240810020111-8f4b5184a5c3 h1:aTBh7fB6tFfievaaOMbYqlNw+62pMtiP7jTt5/91fQg=
+github.com/t14raptor/go-fast v0.0.0-20240810020111-8f4b5184a5c3/go.mod h1:pEpo4BXvgwttfdoT3CdGLK7HLExuB/Likw4yqNipbVM=
 golang.org/x/text v0.4.0 h1:BrVqGRd7+k1DiOgtnFvAkoQEWQvBc25ouMJM6429SFg=
 golang.org/x/text v0.4.0/go.mod h1:mrYo+phRRbMaCq/xk9113O4dZlRixOauAjOtrjsXDZ8=
